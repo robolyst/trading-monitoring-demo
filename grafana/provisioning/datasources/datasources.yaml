@@ -1,0 +1,15 @@
+apiVersion: 1
+datasources:
+  - id: 1
+    orgId: 1
+    name: Trader Logs
+    type: elasticsearch
+    url: elasticsearch:9200
+    database: 'trader-*'
+    isDefault: true
+    jsonData:
+      esVersion: 70
+      maxConcurrentShardRequests: 1
+      timeField: '@timestamp'
+      tlsSkipVerify: true
+    readOnly: true
