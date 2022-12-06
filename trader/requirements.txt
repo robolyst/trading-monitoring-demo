@@ -1,2 +1,2 @@
-numpy
-structlog
+numpy==1.23.5
+structlog==22.3.0
