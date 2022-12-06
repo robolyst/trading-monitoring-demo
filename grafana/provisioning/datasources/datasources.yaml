@@ -8,7 +8,7 @@ datasources:
     database: 'trader-*'
     isDefault: true
     jsonData:
-      esVersion: 70
+      esVersion: 713
       maxConcurrentShardRequests: 1
       timeField: '@timestamp'
       tlsSkipVerify: true
