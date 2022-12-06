@@ -1,0 +1,18 @@
+{
+    "index_patterns" : ["trader*"],
+    "template": {
+        "mappings": {
+            "_source": {
+                "enabled": true
+            },
+            "properties": {
+                "json": {
+                    "properties": {
+                        "event": {"type": "keyword"},
+                        "price": {"type": "float"}
+                    }
+                }
+            }
+        }
+    }
+}

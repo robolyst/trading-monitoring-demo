@@ -7,7 +7,7 @@ import logging
 root_logger = logging.getLogger()
 root_logger.setLevel(logging.DEBUG)
 
-file_handler = logging.FileHandler('logs.json')
+file_handler = logging.FileHandler('/var/log/trader/trader.json')
 root_logger.addHandler(file_handler)
 
 console_handler = logging.StreamHandler()
@@ -26,8 +26,10 @@ logger = structlog.wrap_logger(root_logger)
 
 price = 100
 
+logger.info(event="startup")
+
 while True:
-    sleep(0.1)
+    sleep(0.5)
 
     price = price * (1 + np.random.randn() * 0.01)
     logger.info(event="price", price=price)

@@ -2,12 +2,15 @@ version: '3.7'
 
 services:
 
-  # trader:
-  #   build:
-  #     context: ./trader
-  #   command: python trader.py
-  #   volumes:
-  #     - ./trader:/app
+  trader:
+    build:
+      context: ./trader
+    command: python trader.py
+    volumes:
+      - ./trader:/app
+      - logdata:/var/log/trader
+    depends_on:
+      - filebeat
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0
@@ -24,7 +27,6 @@ services:
       interval: 5s
       timeout: 10s
       retries: 50
-
   
   kibana:
     image: docker.elastic.co/kibana/kibana:7.13.0
@@ -37,5 +39,17 @@ services:
       elasticsearch:
         condition: service_healthy
 
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.13.0
+    command: bash -c 'bash /app/setup.sh && filebeat -e -strict.perms=false'
+    volumes:
+      - logdata:/var/log/trader
+      - ./filebeat:/app
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
 volumes:
   elasticsearch_data:
+  logdata:
