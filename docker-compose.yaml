@@ -3,7 +3,8 @@ version: '3.7'
 services:
 
   trader:
-    build: .
+    build:
+      context: ./trader
     command: python trader.py
     volumes:
-      - .:/app
+      - ./trader:/app
