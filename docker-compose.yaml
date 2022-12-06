@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+
+  trader:
+    build: .
+    command: python trader.py
+    volumes:
+      - .:/app
