@@ -9,7 +9,6 @@ filebeat.inputs:
 output.elasticsearch:
   hosts: "elasticsearch:9200"
   index: "trader-%{+yyy.MM.dd}"
-  pipeline: "trader_log_pipeline"
 
 setup.ilm.enabled: false
 setup.template.name: "trader"
