@@ -42,7 +42,6 @@ services:
     command: filebeat -e -strict.perms=false
     volumes:
       - logdata:/var/log/trader
-      - ./filebeat:/app
       - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
     depends_on:
       elasticsearch:

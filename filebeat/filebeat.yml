@@ -2,7 +2,7 @@ filebeat.inputs:
 - type: log
   paths:
   - '/var/log/trader/trader.logs'
-  json.fields_under_Root: true
+  json.fields_under_root: true
   json.ignore_decoding_error: true
   tags: ["trader"]
 
@@ -13,5 +13,3 @@ output.elasticsearch:
 setup.ilm.enabled: false
 setup.template.name: "trader"
 setup.template.pattern: "trader-*"
-
-ssl.verification_mode: "none"
