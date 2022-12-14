@@ -9,8 +9,6 @@ services:
     volumes:
       - ./trader:/app
       - logdata:/var/log/trader
-    depends_on:
-      - filebeat
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0

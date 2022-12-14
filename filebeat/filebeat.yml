@@ -1,7 +1,7 @@
 filebeat.inputs:
 - type: log
   paths:
-  - '/var/log/trader/trader.json'
+  - '/var/log/trader/trader.logs'
   json.fields_under_Root: true
   json.ignore_decoding_error: true
   tags: ["trader"]
