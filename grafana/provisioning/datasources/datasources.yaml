@@ -2,14 +2,20 @@ apiVersion: 1
 datasources:
   - id: 1
     orgId: 1
-    name: Trader Logs
-    type: elasticsearch
-    url: elasticsearch:9200
-    database: 'trader-*'
+    name: QuestDB
+    type: postgres
+    url: $QUESTDB_URL
+    user: admin
     isDefault: true
+    secureJsonData:
+      password: 'quest'
     jsonData:
-      esVersion: 713
-      maxConcurrentShardRequests: 1
-      timeField: '@timestamp'
-      tlsSkipVerify: true
-    readOnly: true
+      database: qdp
+      sslmode: 'disable' # disable/require/verify-ca/verify-full
+      maxOpenConns: 100 # Grafana v5.4+
+      maxIdleConns: 100 # Grafana v5.4+
+      maxIdleConnsAuto: true # Grafana v9.5.1+
+      connMaxLifetime: 14400 # Grafana v5.4+
+      postgresVersion: 903 # 903=9.3, 904=9.4, 905=9.5, 906=9.6, 1000=10
+      timescaledb: false
+      timeInterval: 1ms

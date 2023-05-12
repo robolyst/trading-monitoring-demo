@@ -5,64 +5,56 @@ services:
   trader:
     build:
       context: ./trader
+    container_name: trader
     command: python trader.py
+    environment:
+      - LOG_FILE_NAME=/var/log/trader/trader.logs
     volumes:
-      - ./trader:/app
       - logdata:/var/log/trader
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.0
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
+  questdb:
+    image: questdb/questdb:7.1.1
+    container_name: questdb
     ports:
-      - "9200:9200"
-      - "9300:9300"
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
+      - "9000:9000"  # Rest and Web app
+      - "9009:9009"  # InfluxDB line protocol
+      - "8812:8812"  # Postgres protocol
     healthcheck:
-      test: curl -s http://elasticsearch:9200 >/dev/null || exit 1
+      test: timeout 10s bash -c ':> /dev/tcp/localhost/9003'
       interval: 5s
       timeout: 10s
       retries: 50
-  
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.13.0
-    container_name: kibana
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-    ports:
-      - "5601:5601"
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
 
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:7.13.0
-    command: filebeat -e -strict.perms=false
+  telegraf:
+    image: telegraf:1.26.2
+    container_name: telegraf
+    environment:
+      - QUESTDB_HOST_NAME=questdb:9009
+      - LOG_FILE_NAME=/var/log/trader/trader.logs
+    depends_on:
+      questdb:
+        condition: service_healthy
     volumes:
       - logdata:/var/log/trader
-      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
+      - ./telegraf.conf:/etc/telegraf/telegraf.conf
 
   grafana:
-    image: grafana/grafana:9.3.1
+    image: grafana/grafana:9.5.1
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
     ports:
       - "3000:3000"
     environment:
+      - QUESTDB_URL=questdb:8812
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_AUTH_BASIC_ENABLED=false
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Editor
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/dashboard.json
     depends_on:
-      elasticsearch:
+      questdb:
         condition: service_healthy
 
 volumes:
-  elasticsearch_data:
   logdata:
